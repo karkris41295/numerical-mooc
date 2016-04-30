@@ -20,7 +20,16 @@ FUNCTIONS
 """
  
 def plot_num_sol(z, t):     #method to plot numerical solution z vs t
+    """Sets plot with Numerical and Analytical solutions.
     
+    Parameters
+    ----------
+    z : array of float
+        numerical solution.
+    t : array of float
+        points on time grid.
+
+    """
     plt.figure(figsize =(10,5)) #set plot size
     plt.ylim(40,160) #y-axis plot limits
     plt.tick_params(axis = 'both', labelsize = 14) #fontsize on axes
@@ -72,7 +81,7 @@ def euler(u, dt, N):     #Euler's Method
     z : array of float
         Array of z positions with respect to time.
     """
-    #initialize array with z (elevation) values (height down from potential)
+    #initialize array with z (elevation) values (height down from 0 potential)
     z = np.zeros(N)
     for n in range(1, N):
         u = u + dt*np.array([u[1], g*(1-u[0]/zt)])
