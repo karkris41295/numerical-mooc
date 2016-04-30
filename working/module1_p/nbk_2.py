@@ -55,6 +55,31 @@ def get_error(z, dt):
     error = np.sum(np.abs(z-z_exact)) #find error (abs of difference between z and z exact vector and sum them up)
     return dt *error # calculation of 'norm' so it's weighted by dt (I think, idk)
     
+def euler(u, dt, N):     #Euler's Method 
+    """Returns an array of z(solution) for given time grid using Euler's Method
+    
+    Parameters
+    ----------
+    u : array of float
+        state vector of flight [z,z'].
+    dt : float
+        time increment.
+    N  : float
+        length of time 'grid'
+        
+    Returns
+    -------
+    z : array of float
+        Array of z positions with respect to time.
+    """
+    #initialize array with z (elevation) values (height down from potential)
+    z = np.zeros(N)
+    for n in range(1, N):
+        u = u + dt*np.array([u[1], g*(1-u[0]/zt)])
+        z[n] = u[0]  #0th element of vector is position(s)
+    return z
+        
+    
 ################################################################################
 """
 MAIN
@@ -64,15 +89,7 @@ for i,dt in enumerate(dt_values): #creates a list of tuples of (i, dt). i is use
     t = np.arange(0.0, 100, dt) #time grid
     N = len(t)
     u = np.array([z0,b0])
-    #initialize array wit z (elevation) values (height down from potential)
-    z = np.zeros(N)
-
-    #Euler's Method 
-    for n in range(1, N):
-        u = u + dt*np.array([u[1], g*(1-u[0]/zt)])
-        z[n] = u[0]
-        
-    z_values[i] = z.copy() #copies the values found by euler's method into the z_values array
+    z_values[i] = euler(u,dt,N) #copies the values found by euler's method into the z_values array
 
 error_values = np.empty_like(dt_values)
 
