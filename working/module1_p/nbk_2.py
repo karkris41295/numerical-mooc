@@ -10,7 +10,7 @@ z_values = np.empty_like(dt_values, dtype=np.ndarray) #creates an empty array wi
 #above fn creates array of arrays or at least makes a placeholder so we can copy one later
 
 z0 = 100. #altitude
-b0 = 10. # upward velocity resulting from gust
+b0 = 0#10. # upward velocity resulting from gust
 zt = 100.
 g = 9.81
 
