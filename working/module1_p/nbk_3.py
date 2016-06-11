@@ -60,7 +60,7 @@ u_values = np.empty_like(dt_values, dtype=np.ndarray) #creates empty array of ar
 
 for i, dt in enumerate(dt_values):
     N = int(T/dt) + 1   # no. of time steps
-    t = np.linspace(0,T, N)  #t time descretization
+    t = np.linspace(0.0,T, N)  #t time descretization
     
     #initialize the array containing the solution for each time step
     u = np.empty((N,4)) # creates N x 4 array/matrix
@@ -116,14 +116,17 @@ def get_diffgrid(u_current, u_fine, dt):
         difference computed in the L-1 norm.
     """
     
-    N_current = len(u_current[:,0])   #length of time grids
+    N_current = len(u_current[:,0])
     N_fine = len(u_fine[:,0])
-    
-    print np.shape(u_current), np.shape(u_fine)
-    grid_size_ratio = ceil(N_fine/N_current) # ratio between gris sizes (no. of time steps)
-    
+   
+    if N_current != N_fine:
+        grid_size_ratio = ceil(N_fine/N_current)+1 # ratio between grid sizes (no. of time steps)
+        #ceil + 1?? WHYYYY
+    else: grid_size_ratio = 1
+
     #difference between grids summed
-    diffgrid = 1 # we're using the 3rd element in u (which is x0) wonder why not y0?
+    diffgrid = dt * np.sum( np.abs(\
+            u_current[:,2]- u_fine[::grid_size_ratio,2])) # we're using the 3rd element in u (which is x0) wonder why not y0?
     
     return diffgrid
 
@@ -136,10 +139,49 @@ for i,dt in enumerate(dt_values):
     ### call the function get_diffgrid() ###
     diffgrid[i] = get_diffgrid(u_values[i],u_values[-1],dt)
     
-pyplot.figure(figsize=(6,6))
+pyplot.figure(figsize=(8,6))
 pyplot.grid(1)
 pyplot.xlabel('$\Delta t$' , fontsize=18)
 pyplot.ylabel('$L_1$-norm of the grid differences', fontsize=18)
 pyplot.axis('equal')
 pyplot.loglog(dt_values[:-1], diffgrid[:-1], color='k',ls='-',lw=2,marker='o')
-#pyplot.show()
+pyplot.show()
+
+### ORDER OF CONVERGENCE ###
+# p = log(f3-f2/f2-f1)/log(r) 
+# f1 is finest mesh, f3 is the coarsest
+# order of convergence measures how fast our solution converges to the real solution 
+r = 2 #constant ratio
+h = 0.001 #finest grid size
+
+#Should probably write a function for this :P
+dt_values2 = np.array([h, r*h, r**2*h])
+u_values2 = np.empty_like(dt_values2, dtype =np.ndarray)
+
+diffgrid2 = np.empty(2)
+for i, dt in enumerate(dt_values2):
+    N = int(T/dt) + 1   # no. of time steps
+    t = np.linspace(0.0,T, N)  #t time descretization
+    
+    #initialize the array containing the solution for each time step
+    u = np.empty((N,4)) # creates N x 4 array/matrix
+    u[0] = np.array([v0,theta0,x0,y0]) #fill 1st element og list with init values
+    
+    # time simulation - Euler method
+    for n in range(N-1): # N-1 because we already put in one value u[0]
+        u[n+1] = euler_step(u[n], f, dt)
+    
+    #storing u values
+    u_values2[i] = u
+
+#calculate f2 - f1
+diffgrid2[0] = get_diffgrid(u_values2[1], u_values2[0], dt_values2[1])
+
+#calculate f3 - f2
+diffgrid2[1] = get_diffgrid(u_values2[2], u_values2[1], dt_values2[2])
+
+# calculate the order of convergence
+p = (log(diffgrid2[1]) - log(diffgrid2[0])) / log(r)
+
+print('The order of convergence is p = {:.3f}'.format(p));
+#p = 1.014, that means numerator of p is almost equal to mesh refinement ratio (log2)
