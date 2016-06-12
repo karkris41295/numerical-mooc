@@ -13,8 +13,8 @@ p = 1.091 #kgm^-3
 A = pi * 0.5**2
 ve = 325 #exhaust speed in ms^-1
 C_D = 0.15 # coefficient of drag or D/L if C_L = 1 
-mp0 = 100 #kg iniitial propellant mass
-mp = mp0 #initial mp
+mp = 100 #kg iniitial propellant mass
+mp_dot = 20 #initial rocket propulsion rate
 
 # C_D/C_L  = aerodynamic efficiancy
 # set initial conditions 
@@ -68,15 +68,14 @@ u = np.empty((N,2)) # creates N x 2 array/matrix
 u[0] = np.array([h0, v0]) #fill 1st element of list with init values
   
 # time simulation - Euler method
-for n in range(N-1):
+for n in range(N-1): #because we're calculating n+1
     # mp update condition
-    if t[n+1] <= 5.000:
-        mp_dot = 20
-    else: mp_dot = 0
-
-    mp = mp0 - mp_dot * t[n+1] 
-    if mp == 0:
-        mp0 = 0  
+    if t[n+1] >= 5.000:
+        mp_dot = 0
+        print mp_dot
+    print t[n+1], n
+    mp = mp - mp_dot * dt 
+    print mp
     u[n+1] = euler_step(u[n], f, dt)
    
 def show_ind_plot(u):
