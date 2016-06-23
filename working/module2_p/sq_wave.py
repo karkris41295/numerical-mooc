@@ -4,7 +4,7 @@ from matplotlib import rcParams
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
-nx = 41 
+nx = 41
 dx = 2./(nx-1)
 nt = 10 
 dt = .02 #seconds

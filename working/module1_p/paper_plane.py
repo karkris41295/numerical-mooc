@@ -1,5 +1,5 @@
 # PAPER PLANE MOD OF NBK 3
-from math import sin, cos, ceil, log 
+from math import sin, cos
 import numpy as np
 from matplotlib import pyplot
 from matplotlib import rcParams
@@ -14,7 +14,7 @@ C_L = 1. # for convenience use C_L = 1
 
 # C_D/C_L  = aerodynamic efficiancy
 # set initial conditions 
-v0 = v_t #initial velocity
+v0 = 1000 #initial velocity
 theta0 = 0. #initial angle of trajectory
 x0, y0 = 0., 3. # coordinates
 
@@ -55,7 +55,7 @@ def euler_step(u, f, dt):
     
     return u + dt * f(u)
 
-T = 3.6   # final time
+T = 10   # final time
 dt = 0.001  # time increment values
 N = int(T/dt) +1
 u = np.empty((N,4))

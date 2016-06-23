@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ROCKET MOD OF NBK 3
 from math import pi
 import numpy as np
@@ -77,7 +78,8 @@ for n in range(N-1): #because we're calculating n+1
     mp = mp - mp_dot * dt 
     print mp
     u[n+1] = euler_step(u[n], f, dt)
-   
+
+    
 def show_ind_plot(u):
    """shows individual plot of a solution given u.
     
@@ -104,4 +106,3 @@ def show_ind_plot(u):
    pyplot.show()
 
 show_ind_plot(u)
-
