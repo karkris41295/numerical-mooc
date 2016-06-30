@@ -26,20 +26,21 @@ rho0[10:20] = 50
 fig = pyplot.figure(figsize=(11,8))
 ax = pyplot.axes(xlim=(0,11), ylim=(0,70))
 line = ax.plot([],[],color = '#003366', ls ='--',lw=3)[0]
-
+'''
 for n in range(nt):
     rn = rho0.copy()
     rho0[0] = 20. 
     f = numpy.asarray([f_lamb(r0) for r0 in rho0])
     line.set_data(x,rho0)
-    rho0[1:] = rn[1:] -dt/dx*(f[1:] -f[0:-1])    
+    rho0[1:] = rn[1:] -dt/dx*(f[1:] -f[0:-1]) 
+'''   
 
 #ANIMATION
-'''
+
 def traffic(i): 
     
     rn = rho0.copy()
-    rho0[0] = 10. 
+    rho0[0] = 20. 
     f = numpy.asarray([f_lamb(r0) for r0 in rho0])
     line.set_data(x,rho0)
     rho0[1:] = rn[1:] -dt/dx*(f[1:] -f[0:-1])
@@ -47,6 +48,4 @@ def traffic(i):
 from matplotlib import animation
 
 ani = animation.FuncAnimation(fig, traffic,interval=100)
-'''
-
-pyplot.show()  
+pyplot.show()

@@ -79,7 +79,7 @@ def ftbs(rho, nt, dt, dx, rho_max, u_max):
         rho = rho_n[t].copy()
 
     return rho_n
-'''
+
 #UNDER CONSTRUCTION
 def ftfs(rho, nt, dt, dx, rho_max, u_max):
     """ Computes the solution with forward in time, forward in space
@@ -112,12 +112,12 @@ def ftfs(rho, nt, dt, dx, rho_max, u_max):
     
     for t in range(1,nt):
         F = computeF(u_max, rho_max, rho)
-        rho_n[t,1:] = rho[1:] - dt/dx*(F[1:]-F[:-1])
-        rho_n[t,0] = rho[0]
+        rho_n[t,0:-1] = rho[:-1] - dt/dx*(F[1:]-F[:-1])
+        rho_n[t,-1] = rho[-1]
         rho = rho_n[t].copy()
 
     return rho_n
-'''   
+ 
 
 #Basic initial condition parameters
 #defining grid size, time steps
@@ -135,7 +135,7 @@ rho = rho_green_light(nx, rho_light)
 sigma = 1.
 dt = sigma*dx
 
-rho_n = ftbs(rho, nt, dt, dx, rho_max, u_max)
+rho_n = ftfs(rho, nt, dt, dx, rho_max, u_max)
 
 from matplotlib import animation
 
