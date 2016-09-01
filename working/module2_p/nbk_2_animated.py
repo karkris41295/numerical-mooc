@@ -21,7 +21,7 @@ u[numpy.intersect1d(lbound, ubound)]=2
 un = numpy.ones(nx)
 
 fig = pyplot.figure(figsize=(11,8))
-ax = pyplot.axes(xlim=(0,2), ylim=(1,3))
+ax = pyplot.axes(xlim=(0,2), ylim=(0,3))
 line = ax.plot([],[],color = '#003366', ls ='--',lw=3)[0]
 pyplot.xlabel('x', fontsize = 18)
 pyplot.ylabel('u', fontsize = 18)
