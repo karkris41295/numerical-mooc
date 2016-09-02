@@ -108,7 +108,7 @@ def show_ind_plot(u):
    
    pyplot.show()
 
-u1 = euler(10, 0)     # running eulers method
+u1 = euler(90, 17*(np.pi/180.))     # running eulers method
 show_ind_plot(u1)
 
 ################################################################################
@@ -120,13 +120,19 @@ from pyevolve import GSimpleGA
 def eval_func(chromosome):
    score = 0.0
    # iterate over the chromosome
-   u = euler(chromosome[0], chromosome[1])
-   x = u[-2,2]
-   score = x
+   vg = chromosome[0]
+   thetag = (np.pi/180.)*chromosome[1] 
+   u = euler(vg, thetag)
+   score = u[-2,2] #the distance covered by the rocket
+   if score < 0:
+       score = 0
    return score
-
-genome = G1DList.G1DList(2)
-genome.evaluator.set(eval_func)
-ga = GSimpleGA.GSimpleGA(genome)
-ga.evolve(freq_stats=30)
-print ga.bestIndividual()
+   
+def ga():
+    genome = G1DList.G1DList(2)
+    genome.setParams(rangemin=10., rangemax=90.)
+    genome.evaluator.set(eval_func)
+    ga = GSimpleGA.GSimpleGA(genome)
+    ga.setGenerations(20)
+    ga.evolve(freq_stats=10)
+    print ga.bestIndividual()
