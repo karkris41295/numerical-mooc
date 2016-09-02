@@ -134,7 +134,7 @@ from matplotlib import animation
 sigma = 1.
 dt = sigma*dx/u_max
 
-rho_n = laxwendroff(rho_initial, nt, dt, dx, rho_max, u_max)
+rho_n = ftbs(rho_initial, nt, dt, dx, rho_max, u_max)
 
 fig = pyplot.figure();
 ax = pyplot.axes(xlim=(0,4),ylim=(-1,8),xlabel=('Distance'),ylabel=('Traffic density'));

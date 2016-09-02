@@ -63,6 +63,7 @@ def get_error(z, dt):
           
     error = np.sum(np.abs(z-z_exact)) #find error (abs of difference between z and z exact vector and sum them up)
     return dt *error # calculation of 'norm' so it's weighted by dt (I think, idk)
+    #it's not weight, it's the sum of all values * dt to give the norm, see the definition of norm :P - future kartik 
     
 def euler(u, dt, N):     #Euler's Method 
     """Returns an array of z(solution) for given time grid using Euler's Method

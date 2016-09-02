@@ -1,4 +1,5 @@
 # PAPER PLANE MOD OF NBK 3
+#Find a combination of launch angle and velocity that gives the best distance.
 from math import sin, cos
 import numpy as np
 from matplotlib import pyplot
@@ -14,8 +15,8 @@ C_L = 1. # for convenience use C_L = 1
 
 # C_D/C_L  = aerodynamic efficiancy
 # set initial conditions 
-v0 = 1000 #initial velocity
-theta0 = 0. #initial angle of trajectory
+v0 = 10. #initial velocity
+theta0 = (np.pi/180.)*90 #initial angle of trajectory
 x0, y0 = 0., 3. # coordinates
 
 def f(u):
@@ -71,6 +72,7 @@ for n in range(N-1): # N-1 because we already put in one value u[0]
     u[n+1] = euler_step(u[n], f, dt)
     if np.abs(u[n+1,3] - 0.00) < 0.000003:
         break    
+        
 def show_ind_plot(u):
    """shows individual plot of a solution given u.
     
@@ -82,16 +84,23 @@ def show_ind_plot(u):
     Returns
     -------
     A plot of the numerical solution.
-    """       
+    """ 
+   height = u[:,3]   
+   idx_negative = np.where(height<0.0)[0]
+   if len(idx_negative)==0:
+       idx_ground = N-1
+       print ('Euler integration has not touched ground yet!')
+   else:
+       idx_ground = idx_negative[0]   
     # plotting the trajectory, let's get the x and y values out!
-   x, y = u[:,2], u[:,3]
+   x, y = u[:idx_ground,2], u[:idx_ground,3]
     
     #visualization of the path
-   pyplot.figure(figsize = (8,6))
+   pyplot.figure(figsize = (8,8))
    pyplot.grid(True)
    pyplot.xlabel(r'x', fontsize = 18)
    pyplot.ylabel(r'y', fontsize = 18)
-   pyplot.title('Glider trajectory, flight time = %.2f' % T, fontsize=18)
+   pyplot.title('distance traveled: {:.3f}'.format(x[idx_ground-1]))
    pyplot.plot(x,y,'k-', lw=2)
    
    pyplot.show()

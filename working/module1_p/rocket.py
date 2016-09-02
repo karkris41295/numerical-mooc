@@ -36,7 +36,7 @@ def f(u):
         array containing the RHS given u.
     """
     
-    h, v = u   # passing array to a tuple
+    h, v = u   # passing array to a tuple (I have no clue what past Kartik was talking about)
     return np.array([v, -g + (mp_dot*ve)/(ms + mp) - (.5 * p * v * np.abs(v)*A*C_D)/(ms+mp)])
 
 def euler_step(u, f, dt):
@@ -91,17 +91,25 @@ def show_ind_plot(u):
     Returns
     -------
     A plot of the numerical solution.
-    """       
-    # plotting the trajectory, let's get the x and y values out!
+    """ 
+   # plotting the trajectory, let's get h        
    h = u[:,0]
-    
-    #visualization of the path
+   
+   #Finding where the height becomes negative
+   idx_negative = np.where(h<0.0)[0]
+   if len(idx_negative)==0:
+       idx_ground = N-1
+       print ('Euler integration has not touched ground yet!')
+   else:
+       idx_ground = idx_negative[0]   
+   
+   #visualization of the path
    pyplot.figure(figsize = (8,6))
    pyplot.grid(True)
    pyplot.xlabel(r't', fontsize = 18)
    pyplot.ylabel(r'h', fontsize = 18)
-   pyplot.title('Rocket Displacement, flight time = %.2f' % T, fontsize=18)
-   pyplot.plot(t,h,'k-', lw=2)
+   pyplot.title('Flight time = %.2f' % T, fontsize=18)
+   pyplot.plot(t[:idx_ground],h[:idx_ground],'k-', lw=2)
    print 'max height =' + str(np.amax(h))
    pyplot.show()
 
