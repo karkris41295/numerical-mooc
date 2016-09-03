@@ -73,10 +73,7 @@ for n in range(N-1): #because we're calculating n+1
     # mp update condition
     if t[n+1] >= 5.000:
         mp_dot = 0
-        print mp_dot
-    print t[n+1], n
     mp = mp - mp_dot * dt 
-    print mp
     u[n+1] = euler_step(u[n], f, dt)
 
     
@@ -111,6 +108,7 @@ def show_ind_plot(u):
    pyplot.title('Flight time = %.2f' % T, fontsize=18)
    pyplot.plot(t[:idx_ground],h[:idx_ground],'k-', lw=2)
    print 'max height =' + str(np.amax(h))
+   print u[idx_ground,1]
    pyplot.show()
 
 show_ind_plot(u)

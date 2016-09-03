@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+#2nd order methods tend to introduce numerical oscillations 
 from math import sin, cos, log
 import numpy
 from matplotlib import pyplot

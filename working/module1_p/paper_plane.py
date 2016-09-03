@@ -108,7 +108,7 @@ def show_ind_plot(u):
    
    pyplot.show()
 
-u1 = euler(10, 0*(np.pi/180.))     # running eulers method
+u1 = euler(29, 0*(np.pi/180.))     # running eulers method
 show_ind_plot(u1)
 
 ################################################################################
