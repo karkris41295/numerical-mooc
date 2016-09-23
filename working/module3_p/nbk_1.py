@@ -19,7 +19,10 @@ def rho_green_light(nx, rho_light):
     rho: array of floats
         Array with initial values of density
     """    
-    rho = np.arange(nx) * 2./nx*rho_light
+    rho = np.arange(nx) * 2./nx*rho_light 
+    # when rho_max = rho_light,
+    # solution gets both left and right travelling waves
+    # here the ftbs is unstable
     rho[int((nx-1)/2):] = 0
     
     return rho
@@ -80,7 +83,6 @@ def ftbs(rho, nt, dt, dx, rho_max, u_max):
 
     return rho_n
 
-#UNDER CONSTRUCTION
 def ftfs(rho, nt, dt, dx, rho_max, u_max):
     """ Computes the solution with forward in time, forward in space
     
@@ -129,7 +131,7 @@ x = np.linspace(0,4,nx)
 
 rho_max = 10.
 u_max = 1.
-rho_light = 4.
+rho_light = 10. #at 10 causes both left and right waves, for stablity, set to 5
 
 rho = rho_green_light(nx, rho_light)
 sigma = 1.
@@ -151,3 +153,8 @@ def animate(data):
 
 anim = animation.FuncAnimation(fig, animate, frames=rho_n, interval=50)
 plt.show()
+
+'''
+The maccormack method which is supposed to not be biased with wave direction
+still doesn't work. Wonder why
+'''

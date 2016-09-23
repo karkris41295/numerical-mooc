@@ -4,6 +4,7 @@ from matplotlib import rcParams
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
+#as rho_in decreases shock velocity decreases
 def rho_red_light(nx, rho_max, rho_in):
     """Computes "red light" initial condition with shock
 
@@ -214,6 +215,7 @@ def maccormack(rho, nt, dt, dx, rho_max, u_max):
 def modcormack(rho, nt, dt, dx, rho_max, u_max):
     """ Computes the solution with a custom modified MacCormack scheme
         Works the best IMO
+        Switched places of predictor and corrector steps
         
     Parameters
     ----------
@@ -256,7 +258,7 @@ nx = 81
 nt = 30
 dx = 4.0/(nx-1)
 
-rho_in = 1.
+rho_in = 2.
 rho_max = 10.
 
 u_max = 1.
@@ -267,7 +269,7 @@ rho = rho_red_light(nx, rho_max, rho_in)
 sigma = 1.
 dt = sigma*dx/u_max
 
-rho_n = ftcs(rho, nt, dt, dx, rho_max, u_max)
+rho_n = modcormack(rho, nt, dt, dx, rho_max, u_max)
     
 from matplotlib import animation
 
