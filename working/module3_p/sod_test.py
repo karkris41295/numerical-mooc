@@ -5,7 +5,7 @@ rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
 #as rho_in decreases shock velocity decreases
-def initial(x, nx):
+def initial(nx):
     """Computes "sod shock tube" initial condition with shock
 
     Parameters
@@ -19,12 +19,31 @@ def initial(x, nx):
         Array with initial values of u vector
         Vector values are [rho, u, p] in kg/m**3, m/s, kN/m**2
     """
-    u = numpy.empty((nx,3))
+    i = numpy.empty((nx,3))
     mid = 40
-    u[:mid,] = numpy.array([1, 0, 100]) 
-    u[mid:,] = numpy.array([0.125, 0, 10])
-    return u
+    i[:mid,] = numpy.array([1, 0., 100.]) 
+    i[mid:,] = numpy.array([0.125, 0., 10.])
+    return i
 
+def computeU(i):
+    """Computes u vector
+
+    Parameters
+    ----------
+    u    : array of arrays
+        Array with u vector at every point x
+        
+    Returns
+    -------
+    F : array of arrrays
+        Array with flux at every point x
+    """
+    i1 = i[:,0]
+    i2 = i[:,1]
+    i3 = i[:,2]
+    u = numpy.array([i1, i1 * i2, i3/(gamma-1.)]).T
+    return u
+    
 def computeF(u):
     """Computes flux 
 
@@ -67,7 +86,7 @@ def richtmyer(u, nt, dt, dx):
     u_n = u.copy()
     u_plus = u.copy()
     
-    for t in range(1,51):
+    for t in range(1,int(nt)):
         F = computeF(u)
         u_plus[1:] = .5*(u[1:] + u[:-1] - dt/dx * (F[1:]-F[:-1]))
         Fplus = computeF(u_plus)
@@ -86,6 +105,7 @@ gamma = 1.4
 
 x = numpy.linspace(-10,10,nx)
 
-u = initial(x,nx)
+i = initial(nx)
+u = computeU(i)
 
 u_n = richtmyer(u, nt, dt, dx)
