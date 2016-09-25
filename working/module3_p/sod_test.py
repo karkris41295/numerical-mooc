@@ -4,7 +4,6 @@ from matplotlib import rcParams
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
-#as rho_in decreases shock velocity decreases
 def initial(nx):
     """Computes "sod shock tube" initial condition with shock
 
@@ -21,8 +20,8 @@ def initial(nx):
     """
     i = numpy.empty((nx,3))
     mid = 40
-    i[:mid,] = numpy.array([1, 0., 100.]) 
-    i[mid:,] = numpy.array([0.125, 0., 10.])
+    i[:mid,] = numpy.array([1., 0., 1e5]) 
+    i[mid:,] = numpy.array([0.125, 0., 1e4])
     return i
 
 def computeU(i):
@@ -41,7 +40,7 @@ def computeU(i):
     i1 = i[:,0]
     i2 = i[:,1]
     i3 = i[:,2]
-    u = numpy.array([i1, i1 * i2, i3/(gamma-1.)]).T
+    u = numpy.array([i1, i1 * i2, (i3/(gamma-1.)+.5*i1*i2**2)]).T
     return u
     
 def computeF(u):
@@ -60,7 +59,29 @@ def computeF(u):
     u1 = u[:,0]
     u2 = u[:,1]
     u3 = u[:,2]
-    f = numpy.array([u2, u2**2/u1 + (gamma-1)*(u3-.5*(u2**2/u1)), (u3 + (gamma-1)*(u3-.5*(u2**2/u1))*(u2/u1))]).T
+    f = numpy.array([u2,\
+                  u2**2/u1+(gamma-1)*(u3-u2**2/(2*u1)),\
+                  u2/u1*(u3+(gamma-1)*(u3-u2**2/(2*u1)))]).T
+    return f
+    
+def final(u):
+    """Breaks down the u vector to give back a final vector 
+
+    Parameters
+    ----------
+    u    : array of arrays
+        Array with u vector at every point x
+        
+    Returns
+    -------
+    final : array of arrrays
+        Array with flux at every point x
+        Vector values are [rho, u, p] in kg/m**3, m/s, kN/m**2
+    """
+    u1 = u[:,0]
+    u2 = u[:,1]
+    u3 = u[:,2]
+    f = numpy.array([u1, u2/u1, (gamma-1)*(u3-u1*(u2/u1)**2)]).T
     return f
     
 def richtmyer(u, nt, dt, dx):
@@ -86,7 +107,7 @@ def richtmyer(u, nt, dt, dx):
     u_n = u.copy()
     u_plus = u.copy()
     
-    for t in range(1,int(nt)):
+    for t in range(1,51):
         F = computeF(u)
         u_plus[1:] = .5*(u[1:] + u[:-1] - dt/dx * (F[1:]-F[:-1]))
         Fplus = computeF(u_plus)
@@ -105,7 +126,20 @@ gamma = 1.4
 
 x = numpy.linspace(-10,10,nx)
 
-i = initial(nx)
-u = computeU(i)
-
+initial = initial(nx)
+u = computeU(initial)
 u_n = richtmyer(u, nt, dt, dx)
+final = final(u_n)
+
+pyplot.figure(figsize=(15,5))
+pyplot.subplot(1,3,1)
+pyplot.plot(x,final[:,1])
+pyplot.title('Velocity')
+pyplot.subplot(1,3,2)
+pyplot.plot(x,final[:,2])
+pyplot.title('Pressure')
+pyplot.subplot(1,3,3)
+pyplot.plot(x,final[:,0])
+pyplot.title('Density')
+    
+pyplot.show()
