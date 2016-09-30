@@ -4,7 +4,7 @@ from matplotlib import rcParams, cm
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 16
 
-def ftcs(T, nt, alpha, dt, dx, dy):
+def ftcs(T, nt, alpha, dt, dx, dy, q):
 
     #force j_mid and i_mid to be integers so we can use them as indices
     #for the array T
@@ -18,8 +18,8 @@ def ftcs(T, nt, alpha, dt, dx, dy):
              dt/dx**2 * (Tn[1:-1,2:] - 2*Tn[1:-1,1:-1] + Tn[1:-1,:-2]))
   
         # Enforce Neumann BCs
-        T[-1,:] = T[-2,:] -7000*dx
-        T[:,-1] = T[:,-2] -7000*dx
+        T[-1,:] = T[-2,:] + q*dx
+        T[:,-1] = T[:,-2] + q*dx
         
         # Check if we reached T=70C
         if T[j_mid, i_mid] >= 70:
@@ -49,10 +49,11 @@ alpha = 1e-4
 Ti = numpy.ones((ny, nx))*20
 Ti[0,:]= 100
 Ti[:,0] = 100
+q = 0 # neumann boundary condition
 
 sigma = 0.25
 dt = sigma * min(dx, dy)**2 / alpha
-T = ftcs(Ti.copy(), nt, alpha, dt, dx, dy)
+T = ftcs(Ti.copy(), nt, alpha, dt, dx, dy, q)
 
 pyplot.figure(figsize=(10,8))
 pyplot.contourf(x,y,T,20,cmap=cm.viridis)
