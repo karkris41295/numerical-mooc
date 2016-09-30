@@ -16,7 +16,7 @@ def ftcs(U, V, Du, Dv, F, k, nt, dt, dh):
              dt/dh**2 * (Un[1:-1,2:] - 2*Un[1:-1,1:-1] + Un[1:-1,:-2]))-\
              Un[1:-1, 1:-1]*(Vn[1:-1, 1:-1])**2 + F*(1.-Un[1:-1, 1:-1])
         
-        V[1:-1,1:-1] = Vn[1:-1,1:-1] + Du *\
+        V[1:-1,1:-1] = Vn[1:-1,1:-1] + Dv *\
             (dt/dh**2 * (Vn[2:,1:-1] - 2*Vn[1:-1,1:-1] + Vn[:-2,1:-1]) +\
              dt/dh**2 * (Vn[1:-1,2:] - 2*Vn[1:-1,1:-1] + Vn[1:-1,:-2]))+\
              Un[1:-1, 1:-1]*(Vn[1:-1, 1:-1])**2 - (F + k)*Vn[1:-1, 1:-1]
@@ -62,15 +62,7 @@ uvinitial = numpy.load('./uvinitial.npz')
 U = uvinitial['U']
 V = uvinitial['V']
 
-#R = ftcs(U, V, Du, Dv, F, k, 220, dt, dh)
-'''
-pyplot.figure(figsize=(10,8))
-pyplot.contourf(x,y,T,20,cmap=cm.viridis)
-pyplot.xlabel('$x$')
-pyplot.ylabel('$y$')
-pyplot.colorbar();
-pyplot.show()
-'''
+U_final = ftcs(U, V, Du, Dv, F, k, 220, dt, dh)
 
 fig = pyplot.figure(figsize=(8,5))
 pyplot.subplot(121)
