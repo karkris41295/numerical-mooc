@@ -82,7 +82,7 @@ def animate(data):
     y = data
     line.set_data(x,y)
     return line,
-    
+
 anim = animation.FuncAnimation(fig, animate, frames=rho_n, interval=50)
 pyplot.show()
 

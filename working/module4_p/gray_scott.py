@@ -1,13 +1,11 @@
 import numpy
-from matplotlib import pyplot
-from matplotlib import rcParams, cm
-rcParams['font.family'] = 'serif'
-rcParams['font.size'] = 16
-
 
 def ftcs(U, V, Du, Dv, F, k, nt, dt, dh):
-   
-    for n in range(nt):
+    
+    Uf = numpy.zeros((nt,len(U),len(U)))
+    Uf[0,:,:] = U.copy()
+    
+    for n in range(1, nt):
         Un = U.copy()
         Vn = V.copy()
         
@@ -32,26 +30,28 @@ def ftcs(U, V, Du, Dv, F, k, nt, dt, dh):
         V[0,:] = V[1,:]
         V[:,0] = V[:,1]
         
+        Uf[n,:,:] = U.copy()
         
-    return U
+    return Uf
    
 X = 5.
 Y = 5.
 
 n = 192
-Du, Dv, F, k = 0.00016, 0.00008, 0.035, 0.065 # Bacteria 1 
+#Du, Dv, F, k = 0.00016, 0.00008, 0.035, 0.065 # Bacteria 1 
 #Du, Dv, F, k = 0.00014, 0.00006, 0.035, 0.065 # Bacteria 2
 #Du, Dv, F, k = 0.00016, 0.00008, 0.060, 0.062 # Coral
 #Du, Dv, F, k = 0.00019, 0.00005, 0.060, 0.062 # Fingerprint
 #Du, Dv, F, k = 0.00010, 0.00010, 0.018, 0.050 # Spirals
 #Du, Dv, F, k = 0.00012, 0.00008, 0.020, 0.050 # Spirals Dense
-#Du, Dv, F, k = 0.00010, 0.00016, 0.020, 0.050 # Spirals Fast
+Du, Dv, F, k = 0.00010, 0.00016, 0.020, 0.050 # Spirals Fast
 #Du, Dv, F, k = 0.00016, 0.00008, 0.020, 0.055 # Unstable
 #Du, Dv, F, k = 0.00016, 0.00008, 0.050, 0.065 # Worms 1
 #Du, Dv, F, k = 0.00016, 0.00008, 0.054, 0.063 # Worms 2
 #Du, Dv, F, k = 0.00016, 0.00008, 0.035, 0.060 # Zebrafish
+
 dh = X/(n-1)
-T = 8000
+T = 80
 dt = .9 * dh**2 / (4*max(Du,Dv))
 nt = int(T/dt)
 
@@ -62,12 +62,4 @@ uvinitial = numpy.load('./uvinitial.npz')
 U = uvinitial['U']
 V = uvinitial['V']
 
-U_final = ftcs(U, V, Du, Dv, F, k, 220, dt, dh)
-
-fig = pyplot.figure(figsize=(8,5))
-pyplot.subplot(121)
-pyplot.imshow(U, cmap = cm.RdBu)
-pyplot.xticks([]), pyplot.yticks([]);
-pyplot.subplot(122)
-pyplot.imshow(V, cmap = cm.RdBu)
-pyplot.xticks([]), pyplot.yticks([]);
+Uf= ftcs(U.copy(), V.copy(), Du, Dv, F, k, T, dt, dh) # Retrieveing 3-D array of 8000 frames of the concentrations U and V
