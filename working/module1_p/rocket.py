@@ -59,6 +59,31 @@ def euler_step(u, f, dt):
     
     return u + dt * f(u)
 
+def rk_step(u, f, dt):
+    """Returns the solution at the next time-step using a 4th order runge-kutta method.
+    
+    Parameters
+    ----------
+    u : array of float
+        solution at the previous time-step.
+    f : function
+        function to compute the right hand-side of the system of equation.
+    dt : float
+        time-increment.
+    
+    Returns
+    -------
+    u_n_plus_1 : array of float
+        approximate solution at the next time step.
+    """
+    
+    k1 = f(u)*dt
+    k2 = f(u+.5*k1)*dt
+    k3 = f(u+.5*k2)*dt
+    k4 = f(u+k3)*dt
+    
+    return u + 1./6. * (k1 + 2*k2 + 2*k3 +k4) 
+
 T = 50 # final time
 dt = 0.1  # time increment values
 t = np.arange(0,T+dt,dt)  #t time descretization
@@ -74,7 +99,7 @@ for n in range(N-1): #because we're calculating n+1
     if t[n+1] >= 5.000:
         mp_dot = 0
     mp = mp - mp_dot * dt 
-    u[n+1] = euler_step(u[n], f, dt)
+    u[n+1] = rk_step(u[n], f, dt)
 
     
 def show_ind_plot(u):
