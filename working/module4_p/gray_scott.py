@@ -44,14 +44,14 @@ n = 192
 #Du, Dv, F, k = 0.00019, 0.00005, 0.060, 0.062 # Fingerprint
 #Du, Dv, F, k = 0.00010, 0.00010, 0.018, 0.050 # Spirals
 #Du, Dv, F, k = 0.00012, 0.00008, 0.020, 0.050 # Spirals Dense
-Du, Dv, F, k = 0.00010, 0.00016, 0.020, 0.050 # Spirals Fast
+#Du, Dv, F, k = 0.00010, 0.00016, 0.020, 0.050 # Spirals Fast
 #Du, Dv, F, k = 0.00016, 0.00008, 0.020, 0.055 # Unstable
-#Du, Dv, F, k = 0.00016, 0.00008, 0.050, 0.065 # Worms 1
+Du, Dv, F, k = 0.00016, 0.00008, 0.050, 0.065 # Worms 1
 #Du, Dv, F, k = 0.00016, 0.00008, 0.054, 0.063 # Worms 2
 #Du, Dv, F, k = 0.00016, 0.00008, 0.035, 0.060 # Zebrafish
 
 dh = X/(n-1)
-T = 80
+T = 8000
 dt = .9 * dh**2 / (4*max(Du,Dv))
 nt = int(T/dt)
 
