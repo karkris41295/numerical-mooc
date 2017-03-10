@@ -1,5 +1,9 @@
-import numpy
+import numpy as np
 from scipy.linalg import solve
+from matplotlib import pyplot
+from matplotlib import rcParams, cm
+rcParams['font.family'] = 'serif'
+rcParams['font.size'] = 16
 
 def constructMatrix(nx, ny, sigma):
     """ Generate implicit matrix for 2D heat equation with Dirichlet in bottom and right and Neumann in top and left
@@ -20,11 +24,11 @@ def constructMatrix(nx, ny, sigma):
         Matrix of implicit 2D heat equation
     """
     
-    A = numpy.zeros(((nx-2)*(ny-2),(nx-2)*(ny-2)))
+    A = np.zeros(((nx-2)*(ny-2),(nx-2)*(ny-2)))
     
     row_number = 0 # row counter
     for j in range(1,ny-1):
-        for i in range(1,nx-1):
+        for i in range(1,nx-1): # because once we pass all i we go to the next j
             
             # Corners
             if i==1 and j==1: # Bottom left corner (Dirichlet down and left)
@@ -82,7 +86,7 @@ def constructMatrix(nx, ny, sigma):
                 
             row_number += 1 # Jump to next row of the matrix!
     
-    return A           
+    return A
 
 def generateRHS(nx, ny, sigma, T, T_bc):
     """ Generates right-hand side for 2D implicit heat equation with Dirichlet in bottom and left and Neumann in top and right
@@ -106,7 +110,7 @@ def generateRHS(nx, ny, sigma, T, T_bc):
         RHS  : array of float
             Right hand side of 2D implicit heat equation
     """
-    RHS = numpy.zeros((nx-2)*(ny-2))
+    RHS = np.zeros((nx-2)*(ny-2))
     
     row_number = 0 # row counter
     for j in range(1,ny-1):
@@ -145,7 +149,7 @@ def generateRHS(nx, ny, sigma, T, T_bc):
             row_number += 1 # Jump to next row!
     
     return RHS
-    
+
 def map_1Dto2D(nx, ny, T_1D, T_bc):
     """ Takes temperatures of solution of linear system, stored in 1D, 
     and puts them in a 2D array with the BCs
@@ -168,7 +172,7 @@ def map_1Dto2D(nx, ny, T_1D, T_bc):
         T: 2D array of float
             Temperature stored in 2D array with BCs
     """
-    T = numpy.zeros((ny,nx))
+    T = np.zeros((ny,nx))
     
     row_number = 0
     for j in range(1,ny-1):
@@ -182,8 +186,8 @@ def map_1Dto2D(nx, ny, T_1D, T_bc):
     T[-1,:] = T[-2,:]
     T[:,-1] = T[:,-2]
     
-    return T    
-    
+    return T  
+
 def btcs_2D(T, A, nt, sigma, T_bc, nx, ny, dt):
     """ Advances diffusion equation in time with backward Euler
    
@@ -212,8 +216,8 @@ def btcs_2D(T, A, nt, sigma, T_bc, nx, ny, dt):
         temperature profile after nt time steps
     """
     
-    j_mid = int((numpy.shape(T)[0])/2)
-    i_mid = int((numpy.shape(T)[1])/2)
+    j_mid = int((np.shape(T)[0])/2)
+    i_mid = int((np.shape(T)[1])/2)
     
     for t in range(nt):
         Tn = T.copy()
@@ -230,7 +234,7 @@ def btcs_2D(T, A, nt, sigma, T_bc, nx, ny, dt):
     if T[j_mid, i_mid]<70:
         print ("Center has not reached 70C yet, it is only {0:.2f}C.".format(T[j_mid, i_mid]))
         
-    return T
+    return T 
 
 alpha = 1e-4
 
@@ -244,25 +248,20 @@ nt = 300
 dx = L/(nx-1)
 dy = H/(ny-1)
 
-x = numpy.linspace(0,L,nx)
-y = numpy.linspace(0,H,ny)
+x = np.linspace(0,L,nx)
+y = np.linspace(0,H,ny)
 
 T_bc = 100
 
-Ti = numpy.ones((ny, nx))*20
+Ti = np.ones((ny, nx))*20
 Ti[0,:]= T_bc
-Ti[:,0] = T_bc
+Ti[:,0] = T_bc  
 
 sigma = 0.25
-A = constructMatrix(nx, ny, sigma)
+A = constructMatrix(nx, ny, sigma)   
 
 dt = sigma * min(dx, dy)**2 / alpha
 T = btcs_2D(Ti.copy(), A, nt, sigma, T_bc, nx, ny, dt)
-
-from matplotlib import pyplot
-from matplotlib import rcParams, cm
-rcParams['font.family'] = 'serif'
-rcParams['font.size'] = 16
-
 pyplot.figure(figsize=(7,7))
-pyplot.contourf(x,y,T,20, cmap=cm.viridis)
+pyplot.contourf(x,y,T,20, cmap=cm.viridis);
+pyplot.show()
